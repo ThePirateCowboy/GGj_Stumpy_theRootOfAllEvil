@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class WaveSpawner : MonoBehaviour
 {
@@ -23,12 +24,18 @@ public class WaveSpawner : MonoBehaviour
     public Transform[] spawnPoints;
 
     public Wave[] waves;
-    private int nextWave = 0;
+    public int nextWave = 0;
     public float timeBetweenWaves = 5f;
     private float waveCountdown;
     public bool canSpawn;
     private float searchCountdown = 1f;
     private bool FirstTime = true;
+    public MusicMakerWaves music;
+    public AudioClip[] clips;
+    public float randomPitchVariation = 0.1f;
+
+    public AudioSource source;
+
 
     public TextMeshProUGUI WaveTitle, WaveDescription;
 
@@ -41,9 +48,16 @@ public class WaveSpawner : MonoBehaviour
 
     }
 
-    
+    public void PlayRandom()
+    {
+        int randomIndex = Random.Range(0, clips.Length);
+        AudioClip randomClip = clips[randomIndex];
 
-   
+        source.pitch = 1f + Random.Range(-randomPitchVariation, randomPitchVariation);
+        source.PlayOneShot(randomClip);
+    }
+
+
     private void Update()
     {
        
@@ -82,18 +96,21 @@ public class WaveSpawner : MonoBehaviour
     private void WaveCompleted()
     {
         StartCoroutine(ShowWaveText());
+        
         Debug.Log("WaveCompleted" + waves[nextWave].name);
         state = SpawnState.COUNTING;
         waveCountdown = timeBetweenWaves;
 
         if (nextWave +1 > waves.Length - 1)
         {
-            nextWave = 0;
+
+            SceneManager.LoadScene("Ending");
             Debug.Log("completed all waves");
         }
         else
         {
-
+            PlayRandom();
+            music.currentClipIndex++;
             nextWave++;
         }
     }

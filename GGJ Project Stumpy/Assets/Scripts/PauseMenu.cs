@@ -20,6 +20,7 @@ public class PauseMenu : MonoBehaviour
     public TextMeshProUGUI TextCounter;
     private bool once;
     public GameObject pauseUnactivate;
+    private AudioSource[] audioSources;
     private void Awake()
     {
             if (instance == null)
@@ -32,7 +33,10 @@ public class PauseMenu : MonoBehaviour
                 Destroy(gameObject);
             }
     }
-
+    private void Start()
+    {
+        audioSources = FindObjectsOfType<AudioSource>();
+    }
     public void PauseUnpauseInput(InputAction.CallbackContext context)
     {
         if (context.performed) // when the pause action button has been fully pressed.
@@ -65,8 +69,8 @@ public class PauseMenu : MonoBehaviour
             {
                 timesPaused++;
             }
-            
 
+            ResumeAllAudioSources();
             isPaused = false;
             pauseScreen.SetActive(false); // enable the pause object
             pauseUnactivate.SetActive(true);
@@ -74,12 +78,38 @@ public class PauseMenu : MonoBehaviour
         }
         else // if not already paused
         {
+            PauseAllAudioSources();
             isPaused = true;
             pauseUnactivate.SetActive(false);
             pauseScreen.SetActive(true); // enable the pause object
             Time.timeScale = 0f; //Set the time to stop
         }
     }
+
+    public void PauseAllAudioSources()
+    {
+        foreach (AudioSource audioSource in audioSources)
+        {
+            audioSource.Pause();
+        }
+    }
+    public void StopAllAudioSources()
+    {
+        foreach (AudioSource audioSource in audioSources)
+        {
+            audioSource.Stop();
+        }
+    }
+
+    public void ResumeAllAudioSources()
+    {
+        foreach (AudioSource audioSource in audioSources)
+        {
+            audioSource.UnPause();
+        }
+    }
+
+
 
     public void Update()
     {

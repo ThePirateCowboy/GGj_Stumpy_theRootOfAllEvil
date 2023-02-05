@@ -7,7 +7,10 @@ using UnityEngine.InputSystem;
 public class RespawnController : MonoBehaviour
 {
     public static RespawnController instance; // making an instance.
-
+    public AudioClip[] clips;
+    public AudioSource source;
+    private AudioSource[] sources;
+    public float fadeOutTime = 1f;
     //*****************************************
     [HideInInspector] public bool shouldfaceLeft; // This bool is used in to store whether the player should be facing left or facing right on respawn.
     private Vector3 respawnPoint; // The point at whihc the repawn will spawn the player.  
@@ -30,8 +33,11 @@ public class RespawnController : MonoBehaviour
         }
     }
 
+
+
     void Start()
     {
+        sources = FindObjectsOfType<AudioSource>();
         thePlayer = PlayerHealthController.instance.gameObject; //stores the player object
         respawnPoint = thePlayer.transform.position; //if first time loading set spawn point to the original position.
     }
@@ -62,9 +68,10 @@ public class RespawnController : MonoBehaviour
     IEnumerator RespawnCo()
     {
         PlayerController.instance.isRespawning = true; //register the player as in the middle of the respawn process.
-       
+        PlayRandomClip();
         PlayerController.instance.canMove = false; //stop the player from moving
         yield return new WaitForSeconds(2);
+        FadeOutAll();
         UIController.instance.StartFadeToBlack(); //fade to black
         thePlayer.SetActive(false); //disable the playerController
         yield return new WaitForSeconds(1f - ((UIController.instance.fadeSpeed/3))); //wait for given time
@@ -109,7 +116,35 @@ public class RespawnController : MonoBehaviour
         PlayerController.instance.canMove = true;
     }
 
-    
+    public void PlayRandomClip()
+    {
+        source.clip = GetRandomClip();
+        source.Play();
+    }
+
+    private AudioClip GetRandomClip()
+    {
+        int randomIndex = Random.Range(0, clips.Length);
+        return clips[randomIndex];
+    }
+    public void FadeOutAll()
+    {
+        StartCoroutine(FadeOut());
+    }
+
+    private IEnumerator FadeOut()
+    {
+        float t = 0f;
+        while (t < fadeOutTime)
+        {
+            t += Time.deltaTime;
+            foreach (AudioSource source in sources)
+            {
+                source.volume = Mathf.Lerp(1f, 0f, t / fadeOutTime);
+            }
+            yield return null;
+        }
+    }
 
 }
 

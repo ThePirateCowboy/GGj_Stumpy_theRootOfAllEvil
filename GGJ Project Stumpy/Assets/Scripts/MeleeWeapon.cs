@@ -24,6 +24,9 @@ public class MeleeWeapon : MonoBehaviour
     private bool downwardStrike; // registers if the strike was meant to be a downward strike.
     private bool hasStarted; // registers if the strike was meant to be a upward strike. 
 
+    public AudioClip[] audioClips;
+    public AudioSource audioSource;
+
 
     private void OnEnable()
     {
@@ -46,11 +49,19 @@ public class MeleeWeapon : MonoBehaviour
         HandleMovement();
         
     }
-    
+
+    public void PlayRandomAudio()
+    {
+        int randomIndex = Random.Range(0, audioClips.Length);
+        audioSource.clip = audioClips[randomIndex];
+        audioSource.Play();
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.GetComponent<EnemyHealth>()) //if the object that collides with the trigger has a EnemyHealth script on it.
         {
+            PlayRandomAudio();
             HandleCollision(other.GetComponent<EnemyHealth>());
         }
     }

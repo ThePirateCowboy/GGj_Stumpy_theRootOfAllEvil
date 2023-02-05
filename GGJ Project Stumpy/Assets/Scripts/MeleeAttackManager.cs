@@ -32,7 +32,8 @@ public class MeleeAttackManager : MonoBehaviour
     private bool holdingUp; // Bool to store whether the the player inputy is being held UP or not.
     private bool holdingDown; // Bool to store whether the the player inputy is being held DOWN or not.
     private float meleeCounter; //Counter used to countdown from the meleeTime after each hit in order to prevent button mashing on melee.
-
+    public AudioClip[] audioClips;
+    public AudioSource audioSource;
 
     private void Awake()
     {
@@ -112,7 +113,7 @@ public class MeleeAttackManager : MonoBehaviour
     private void CheckInputAndAttack()
     {
         meleeCounter = meleeTime; //sets the timer to the meleeTime public var.
-        //play sound
+        PlayRandomAudio();
         if (meleeAttack && (character.inputY > 0 || holdingUp)) //Checks to see if meleeAttack is true and pressing up
         {
             meleeAnimator.SetTrigger("IsMeleeUP"); //Turns on the animation on the melee weapon to show the swipe area for the melee attack upwards
@@ -126,5 +127,12 @@ public class MeleeAttackManager : MonoBehaviour
         {
             meleeAnimator.SetTrigger("IsMelee"); //Turns on the animation on the melee weapon to show the swipe area for the melee attack forwards
         }
+    }
+
+    public void PlayRandomAudio()
+    {
+        int randomIndex = Random.Range(0, audioClips.Length);
+        audioSource.clip = audioClips[randomIndex];
+        audioSource.Play();
     }
 }

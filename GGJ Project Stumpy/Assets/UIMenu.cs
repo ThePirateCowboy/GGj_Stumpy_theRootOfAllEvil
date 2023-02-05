@@ -8,11 +8,27 @@ public class UIMenu : MonoBehaviour
     // Start is called before the first frame update
     public string levelToLoadOnStart = "Test Movement";
     public Animator anim;
+    public AudioClip[] clips1;
+    public AudioClip[] clips2;
+    public AudioSource audioSource;
+
+    private AudioSource[] audioSources;
     void Start()
     {
-        
+        audioSources = FindObjectsOfType<AudioSource>();
     }
-
+    public void PlayClip1()
+    {
+        AudioClip clip1 = clips1[Random.Range(0, clips1.Length)];
+        audioSource.clip = clip1;
+        audioSource.Play();
+    }
+    public void PlayClip2()
+    {
+        AudioClip clip2 = clips2[Random.Range(0, clips2.Length)];
+        audioSource.clip = clip2;
+        audioSource.Play();
+    }
     // Update is called once per frame
     void Update()
     {
@@ -21,7 +37,7 @@ public class UIMenu : MonoBehaviour
     public void LoadScene()
     {
         anim.SetTrigger("FadeOut");
-        LoadSceneAsync(levelToLoadOnStart);
+        SceneManager.LoadScene(levelToLoadOnStart);
         
     }
 
@@ -29,17 +45,19 @@ public class UIMenu : MonoBehaviour
     {
         Application.Quit();
     }
-
-    IEnumerator LoadSceneAsync(string levelToLoad)
+    public void PauseAllAudioSources()
     {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(levelToLoad);
-        while (!asyncLoad.isDone)
+        foreach (AudioSource audioSource in audioSources)
         {
-            yield return null;
+            audioSource.Pause();
         }
-        yield return new WaitForSeconds(.8f);
-        
-        
     }
-    
+    public void StopAllAudioSources()
+    {
+        foreach (AudioSource audioSource in audioSources)
+        {
+            audioSource.Stop();
+        }
+    }
+
 }

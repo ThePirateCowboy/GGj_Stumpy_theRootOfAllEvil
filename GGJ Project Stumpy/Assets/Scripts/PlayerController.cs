@@ -20,6 +20,13 @@ public class PlayerController : MonoBehaviour
     */
 
     //Rooting
+    public AudioClip[] jump;
+    public AudioSource JumpSource;
+    public AudioClip earthQuakeClip;
+    public AudioSource EarthQuakeClipSource;
+    public AudioClip[] RootEarthQuake;
+    public AudioSource source;
+    public Footsteps footsteps;
     public bool hasMetCarrot;
     [Header("Rooting Abilities")]
     public bool isRooting;
@@ -196,9 +203,26 @@ public class PlayerController : MonoBehaviour
         transform.localScale = localScaleAtStart;
     }
 
+
+    public void PlayRootBeerClip()
+    {
+        source.clip = GetRandomClip();
+        source.Play();
+    }
+
+    private AudioClip GetRandomClip()
+    {
+        int randomIndex = Random.Range(0, RootEarthQuake.Length);
+        return RootEarthQuake[randomIndex];
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
+        if(!canMove)
+        {
+            playerAnimator.SetBool("IsMoving", false);
+            theRB.velocity = new Vector2(0, 0);
+        }
        if (vulneableTimeCountdown >0)
         {
             vulneableTimeCountdown -= Time.deltaTime;
@@ -229,6 +253,8 @@ public class PlayerController : MonoBehaviour
                 {
                     if (jumpBufferCounter >= 0f && coyoteTimeCounter > 0f)
                     {
+                        
+                        PlayJumpClip();
                         playerAnimator.SetBool("IsJumping", true);
                         playerAnimator.SetBool("IsGrounded", false);
                         playerAnimator.SetBool("IsFalling", false);
@@ -247,9 +273,16 @@ public class PlayerController : MonoBehaviour
             wasOnGround = isGrounded; //Registers if the player was grounded this frame. 
         }
     }
+
+    public void PlayEarthQuakeClip()
+    {
+                EarthQuakeClipSource.clip = earthQuakeClip;
+                EarthQuakeClipSource.Play();
+    }
     /// <summary>
     /// This method stores info in our variables for later use 
     /// </summary>
+    /// 
     private void StoreVariables()
     {
         coll = GetComponent<Collider2D>();
@@ -310,6 +343,10 @@ public class PlayerController : MonoBehaviour
     {
         if (!isGrounded)
         {
+            
+            
+            footsteps.canPlayFootsteps = false;
+            
             if (wasOnGround)
             {
                 coll.sharedMaterial = slippy;
@@ -355,12 +392,19 @@ public class PlayerController : MonoBehaviour
     {
         theRB.velocity = new Vector2(inputX * moveSpeed, theRB.velocity.y);
 
-        if(inputX == 0)
+        if(inputX == 0 || !canMove)
         {
+            
             playerAnimator.SetBool("IsMoving", false);
+            footsteps.canPlayFootsteps = false;
         }
         else
         {
+            if (isGrounded && canMove)
+            {
+                footsteps.canPlayFootsteps = true;
+            }
+            
             playerAnimator.SetBool("IsMoving", true);
         }
     }
@@ -462,6 +506,7 @@ public class PlayerController : MonoBehaviour
     {
         if(context.performed && cooldownToRootAbilityCounter <=0 && isGrounded && RootBeerAmount >= 3)
         {
+            PlayEarthQuakeClip();
             RootBeerAmount = 0;
             PlayerHealthController.instance.HealPlayer();
             isRooting = true;
@@ -619,9 +664,19 @@ public class PlayerController : MonoBehaviour
         theRB.gravityScale = gravityAtStart;
     }
 
+    public void PlayJumpClip()
+    {
+        JumpSource.clip = GetRandomJumpClip();
+        JumpSource.Play();
+    }
+
+    private AudioClip GetRandomJumpClip()
+    {
+        int randomIndex = Random.Range(0, jump.Length);
+        return jump[randomIndex];
+    }
 
 
-    
 
 }
 

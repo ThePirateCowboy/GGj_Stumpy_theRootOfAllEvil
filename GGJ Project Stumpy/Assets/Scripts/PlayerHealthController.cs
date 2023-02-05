@@ -16,6 +16,12 @@ public class PlayerHealthController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI healthText;
     public Image Heart1, Heart2, Heart3, Heart4, Heart5;
     public Sprite Fullhear, Halfheart, EmptyHeart;
+    public AudioClip[] clips;
+    public AudioSource DamageSource;
+
+    public AudioClip audioClip;
+    public AudioSource audioSource;
+
 
     private void Awake()
     {
@@ -52,14 +58,28 @@ public class PlayerHealthController : MonoBehaviour
         }
     }
 
+    public void PlayDamageClip()
+    {
+        DamageSource.clip = GetRandomClip(clips);
+        DamageSource.Play();
+    }
+
+    private AudioClip GetRandomClip(AudioClip[] audioClips)
+    {
+        int randomIndex = Random.Range(0, audioClips.Length);
+        return clips[randomIndex];
+    }
     public void DealDamage()
     {
         if (invincibleCounter <= 0)
         {
+           
             currentHealth--;
             if (currentHealth <= 0)
             {
+
                 currentHealth = 0;
+
                 RespawnController.instance.Respawn();
             }
             else
@@ -67,6 +87,7 @@ public class PlayerHealthController : MonoBehaviour
                 invincibleCounter = invincibleLength;
                 //theSR.color = new Color(theSR.color.r, theSR.color.g, theSR.color.b, .5f);
                 theAnim.SetTrigger("IsHurt");
+               
                 PlayerController.instance.KnockBack();
             }
             RefreshHealthDisplay();
@@ -91,7 +112,7 @@ public class PlayerHealthController : MonoBehaviour
         UpdateImages();
         if (currentHealth <=0)
         {
-            //healthText.text = "You're DEAD";
+            RespawnController.instance.StoneHenge = true;
             theAnim.SetTrigger("IsDead");
             YourDeadUI.SetActive(true);
         }
@@ -111,9 +132,11 @@ public class PlayerHealthController : MonoBehaviour
             Heart3.sprite = Fullhear;
             Heart4.sprite = Fullhear;
             Heart5.sprite = Fullhear;
+
         }
         else if(currentHealth == 9)
         {
+            PlayDamageClip();
             Heart1.sprite = Fullhear;
             Heart2.sprite = Fullhear;
             Heart3.sprite = Fullhear;
@@ -122,6 +145,7 @@ public class PlayerHealthController : MonoBehaviour
         }
         else if(currentHealth == 8)
         {
+            PlayDamageClip();
             Heart1.sprite = Fullhear;
             Heart2.sprite = Fullhear;
             Heart3.sprite = Fullhear;
@@ -130,6 +154,7 @@ public class PlayerHealthController : MonoBehaviour
         }
         else if (currentHealth == 7)
         {
+            PlayDamageClip();
             Heart1.sprite = Fullhear;
             Heart2.sprite = Fullhear;
             Heart3.sprite = Fullhear;
@@ -138,6 +163,7 @@ public class PlayerHealthController : MonoBehaviour
         }
         else if (currentHealth == 6)
         {
+            PlayDamageClip();
             Heart1.sprite = Fullhear;
             Heart2.sprite = Fullhear;
             Heart3.sprite = Fullhear;
@@ -146,6 +172,7 @@ public class PlayerHealthController : MonoBehaviour
         }
         else if (currentHealth == 5)
         {
+            PlayDamageClip();
             Heart1.sprite = Fullhear;
             Heart2.sprite = Fullhear;
             Heart3.sprite = Halfheart;
@@ -154,6 +181,7 @@ public class PlayerHealthController : MonoBehaviour
         }
         else if (currentHealth == 4)
         {
+            PlayDamageClip();
             Heart1.sprite = Fullhear;
             Heart2.sprite = Fullhear;
             Heart3.sprite = EmptyHeart;
@@ -162,6 +190,7 @@ public class PlayerHealthController : MonoBehaviour
         }
         else if (currentHealth == 3)
         {
+            PlayDamageClip();
             Heart1.sprite = Fullhear;
             Heart2.sprite = Halfheart;
             Heart3.sprite = EmptyHeart;
@@ -170,6 +199,7 @@ public class PlayerHealthController : MonoBehaviour
         }
         else if (currentHealth == 2)
         {
+            PlayLoopedAudioTrack();
             Heart1.sprite = Fullhear;
             Heart2.sprite = EmptyHeart;
             Heart3.sprite = EmptyHeart;
@@ -178,6 +208,7 @@ public class PlayerHealthController : MonoBehaviour
         }
         else if (currentHealth == 1)
         {
+            
             Heart1.sprite = Halfheart;
             Heart2.sprite = EmptyHeart;
             Heart3.sprite = EmptyHeart;
@@ -186,11 +217,24 @@ public class PlayerHealthController : MonoBehaviour
         }
         else if (currentHealth == 2)
         {
+            StopLoopedAudioTrack();
             Heart1.sprite = EmptyHeart;
             Heart2.sprite = EmptyHeart;
             Heart3.sprite = EmptyHeart;
             Heart4.sprite = EmptyHeart;
             Heart5.sprite = EmptyHeart;
         }
+    }
+    public void PlayLoopedAudioTrack()
+    {
+        audioSource.clip = audioClip;
+        audioSource.loop = true;
+        audioSource.Play();
+    }
+
+    public void StopLoopedAudioTrack()
+    {
+        audioSource.Stop();
+        audioSource.loop = false;
     }
 }

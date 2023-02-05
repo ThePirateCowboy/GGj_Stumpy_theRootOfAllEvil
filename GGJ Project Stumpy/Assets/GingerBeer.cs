@@ -33,7 +33,7 @@ public class GingerBeer : MonoBehaviour
         if(other.tag == "Player")
         {
             PlayerController.instance.UpdateRootbeerAmountAndUI();
-            //Instantiate(PickUpEffect, transform.position, transform.rotation);
+            Instantiate(PickUpEffect, transform.position, transform.rotation);
             Destroy(gameObject);
         }
     }
@@ -45,4 +45,5 @@ public class GingerBeer : MonoBehaviour
         yield break;
 
     }
+    
 }

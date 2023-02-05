@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Enemy
+  - Ground
+  - Pickup
+  - Zone1
+  - Zone2
+  - Zone3
+  - Zone4
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Platform
+  - Water
+  - UI
+  - Tilemap
+  - Player
+  - Background
+  - Ground
+  - NoCollisions
+  - Enemy
+  - Boundary
+  - PickUp
+  - MiniMap
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: BGFar
+    uniqueID: 1924206881
+    locked: 0
+  - name: Player
+    uniqueID: 78306605
+    locked: 0
+  - name: Foreground
+    uniqueID: 2951410061
+    locked: 0
+  - name: UI
+    uniqueID: 342522499
+    locked: 0
